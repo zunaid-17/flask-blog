@@ -85,17 +85,6 @@ def home():
         "index.html", params=params, posts=posts, prev=prev, next=next
     )
 
-
-# @app.route("/uploader", methods=["GET", "POST"])
-# def uploader():
-#     if "user" in session and session["user"] == params["admin_user"]:
-#         if request.method == "POST":
-#             f = request.files["file"]
-#             f.save(f.filename)
-#             f.save(os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(f.filename)))
-#             return render_template("ack.html", name=f.filename)
-#             return "Uploaded successfully"
-
 @app.route("/about")
 def about():
     return render_template("about.html", params=params)
@@ -160,6 +149,7 @@ def edit(sno):
                 return redirect("/dashboard")
         post = Posts.query.filter_by(sno=sno).first()
         return render_template("edit.html", params=params, post=post, sno=sno)
+
 
 
 @app.route("/delete/<string:sno>", methods=["GET", "POST"])
