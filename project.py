@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect,flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
 import json
@@ -89,9 +89,10 @@ def home():
 def about():
     return render_template("about.html", params=params)
 
-
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
+    error = None  # Initialize error message to None
+
     if "user" in session and session["user"] == params["admin_user"]:
         posts = Posts.query.all()
         return render_template("dashboard.html", params=params, posts=posts)
@@ -104,9 +105,11 @@ def dashboard():
             session["user"] = username
             posts = Posts.query.all()
             return render_template("dashboard.html", params=params, posts=posts)
-    else:
-        return render_template("login.html", params=params)
+        else:
+            error = "Invalid username or password. Please try again."
 
+    # If it's a GET request or if the credentials are invalid, show the login page with an error message.
+    return render_template("login.html", params=params, error=error)
 
 @app.route("/logout")
 def logout():
@@ -196,6 +199,7 @@ def contact():
                           recipients = [params['gmail-user']],
                           body = message + "\n" + phone + "\n" + email
                           )
+        flash("Thanks for submitting your details. We'll get back to you soon.","success")
     return render_template("contact.html", params=params)
 
 
